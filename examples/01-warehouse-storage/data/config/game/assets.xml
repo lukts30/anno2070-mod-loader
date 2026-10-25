@@ -1,0 +1,5 @@
+<ModOps>
+  <ModOp Type="replace" GUID="10035" Path="/Values/Warehouse/Capacity">
+    <Capacity>80</Capacity>
+  </ModOp>
+</ModOps>

@@ -17,6 +17,9 @@ do not directly apply. Only the core XML operations (`ModOps`) are reused.
 Restart after editing mods. Diagnostics are written to `anno2070-modloader.log`.
 `ANNO5_MODS_DIR` overrides the mod directory; `ANNO5_MODS_DISABLED=1` disables hooks.
 
+Try the [warehouse storage example](examples/01-warehouse-storage): a one-field
+patch with an immediately visible in-game result.
+
 ## Building
 
 **Windows:** use an x64 Visual Studio developer shell with CMake and Ninja.
