@@ -41,7 +41,8 @@ cmake --build build
 
 CI checks MSVC, Windows clang-cl, and the Linux cross-build. Both toolchains use
 the static Microsoft runtime. Push a tag matching the CMake version (e.g. `v0.1.0`)
-to create a **draft release** with the MSVC ZIP and SHA-256 checksum after CI passes.
+to create a **draft release** with the Nix-built Clang ZIP and SHA-256 checksum
+after CI passes. The packaged DLL is also tested on Windows before release.
 Tags such as `v0.1.0-beta.1` are marked as prereleases.
 
 ## Upstream

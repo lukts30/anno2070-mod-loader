@@ -35,9 +35,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@v8
         with:
-          name: release-msvc
+          name: release-clang
           path: release
-      - name: Checksum MSVC package
+      - name: Checksum release package
         working-directory: release
         run: sha256sum anno2070-mod-loader-*-windows-x64.zip > SHA256SUMS
       - uses: softprops/action-gh-release@v3
@@ -45,6 +45,16 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Anno 2070 Mod Loader ${{ github.ref_name }}
           generate_release_notes: true
+          body: |
+            ## Installation
+            For **Anno 2070 version 3.00.8051 (64-bit)**.
+
+            Download the attached `anno2070-mod-loader-…-windows-x64.zip` and extract it beside the game executable.
+            Place mod packages in a `mods` folder in the same directory.
+
+            **Wine/Proton:** set the DLL override to `version=n,b`.
+
+            Restart the game after changing mods. Loading diagnostics are written to `anno2070-modloader.log` beside the game executable.
           draft: true
           prerelease: ${{ contains(github.ref_name, '-') }}
           fail_on_unmatched_files: true

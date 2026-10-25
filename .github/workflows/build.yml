@@ -44,16 +44,6 @@ jobs:
           name: anno2070-${{ matrix.compiler }}-windows-x64
           path: dist/
           if-no-files-found: error
-      - name: Package MSVC release
-        if: matrix.compiler == 'msvc'
-        working-directory: build
-        run: cpack -G ZIP
-      - uses: actions/upload-artifact@v7
-        if: matrix.compiler == 'msvc'
-        with:
-          name: release-msvc
-          path: build/anno2070-mod-loader-*-windows-x64.zip
-          if-no-files-found: error
 
   nix:
     name: NixOS-compatible Clang cross-build
@@ -69,3 +59,41 @@ jobs:
           nix develop -c cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=cmake/clang-msvc.cmake
           nix develop -c cmake --build build --parallel 2
           nix develop -c python scripts/check-pe.py build/version.dll
+      - name: Package Clang release
+        run: nix develop -c cpack --config build/CPackConfig.cmake -B build
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-clang
+          path: build/anno2070-mod-loader-*-windows-x64.zip
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: clang-proxy-smoke
+          path: build/proxy-smoke.exe
+          if-no-files-found: error
+
+  release-smoke:
+    name: Test release DLL on Windows
+    needs: nix
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: release-clang
+          path: release
+      - uses: actions/download-artifact@v8
+        with:
+          name: clang-proxy-smoke
+          path: smoke
+      - name: Extract release package
+        shell: pwsh
+        run: |
+          $zip = Get-Item release/anno2070-mod-loader-*-windows-x64.zip
+          Expand-Archive -LiteralPath $zip.FullName -DestinationPath package
+      - name: Check packaged PE imports and exports
+        shell: pwsh
+        run: python scripts/check-pe.py package/version.dll --readobj 'C:/Program Files/LLVM/bin/llvm-readobj.exe'
+      - name: Test packaged proxy
+        shell: pwsh
+        run: '& ./smoke/proxy-smoke.exe (Resolve-Path package/version.dll).Path'
