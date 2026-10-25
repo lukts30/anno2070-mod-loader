@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Check release version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Match tag to CMake version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python scripts/check-release.py "$RELEASE_TAG"
+
+  build:
+    needs: validate
+    uses: ./.github/workflows/build.yml
+
+  release:
+    name: Create draft release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: release-msvc
+          path: release
+      - name: Checksum MSVC package
+        working-directory: release
+        run: sha256sum anno2070-mod-loader-*-windows-x64.zip > SHA256SUMS
+      - uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Anno 2070 Mod Loader ${{ github.ref_name }}
+          generate_release_notes: true
+          draft: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          fail_on_unmatched_files: true
+          files: |
+            release/anno2070-mod-loader-*-windows-x64.zip
+            release/SHA256SUMS

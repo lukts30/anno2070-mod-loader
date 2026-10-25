@@ -3,10 +3,10 @@ name: Build
 on:
   push:
     branches: [anno2070]
-    tags: ['v*']
   pull_request:
     branches: [anno2070]
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -20,7 +20,7 @@ jobs:
       matrix:
         compiler: [msvc, clang-cl]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
@@ -39,25 +39,27 @@ jobs:
         run: python scripts/check-pe.py build/version.dll --readobj 'C:/Program Files/LLVM/bin/llvm-readobj.exe'
       - name: Stage package
         run: cmake --install build --prefix dist --component Runtime
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: anno2070-${{ matrix.compiler }}-windows-x64
           path: dist/
+          if-no-files-found: error
       - name: Package MSVC release
         if: matrix.compiler == 'msvc'
         working-directory: build
         run: cpack -G ZIP
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: matrix.compiler == 'msvc'
         with:
           name: release-msvc
           path: build/anno2070-mod-loader-*-windows-x64.zip
+          if-no-files-found: error
 
   nix:
     name: NixOS-compatible Clang cross-build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: cachix/install-nix-action@v31
       - name: Check development tooling
         run: nix flake check
@@ -67,21 +69,3 @@ jobs:
           nix develop -c cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=cmake/clang-msvc.cmake
           nix develop -c cmake --build build --parallel 2
           nix develop -c python scripts/check-pe.py build/version.dll
-
-  release:
-    if: startsWith(github.ref, 'refs/tags/v')
-    needs: [windows, nix]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: release-msvc
-          path: release
-      - name: Publish MSVC build
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          RELEASE_TAG: ${{ github.ref_name }}
-        run: gh release create "$RELEASE_TAG" release/*.zip --verify-tag --generate-notes

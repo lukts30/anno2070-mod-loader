@@ -36,8 +36,10 @@ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=c
 cmake --build build
 ```
 
-CI checks MSVC, Windows clang-cl, and the Linux cross-build. `v*` tags publish
-the MSVC package. Both toolchains use the static Microsoft runtime.
+CI checks MSVC, Windows clang-cl, and the Linux cross-build. Both toolchains use
+the static Microsoft runtime. Push a tag matching the CMake version (e.g. `v0.1.0`)
+to create a **draft release** with the MSVC ZIP and SHA-256 checksum after CI passes.
+Tags such as `v0.1.0-beta.1` are marked as prereleases.
 
 ## Upstream
 
