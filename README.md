@@ -1,15 +1,18 @@
 # Anno 2070 mod loader
 
-A native mod loader for **Anno 2070 3.00.8051 (x64)**, using the
-[upstream ModOps XML core](https://github.com/jakobharder/anno-mod-loader).
+A port of the [Anno 1800 / Anno 117 mod loader](https://github.com/jakobharder/anno-mod-loader)
+for **Anno 2070 version 3.00.8051 (64-bit)**. It reuses the upstream XML operations
+core with a native loader written for Anno 2070.
 
 Place `version.dll` beside the game executable, with mod packages in `mods/`.
 Under Wine, set the DLL override `version=n,b`. No companion runtime DLL is needed.
 
 Packages load alphabetically; a leading `-` disables a package. Files under
 `data/` and `addondata/` replace game resources; XML rooted at `ModOps` patches
-them instead. Use 2070-specific paths and GUIDs. `modinfo.json` dependency
-resolution and build 7792 are not supported.
+them instead.
+
+Anno 2070 has its own XML structure, so modding guides for Anno 1800 and Anno 117
+do not directly apply. Only the core XML operations (`ModOps`) are reused.
 
 Restart after editing mods. Diagnostics are written to `anno2070-modloader.log`.
 `ANNO5_MODS_DIR` overrides the mod directory; `ANNO5_MODS_DISABLED=1` disables hooks.
