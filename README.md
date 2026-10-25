@@ -5,7 +5,7 @@ for **Anno 2070 version 3.00.8051 (64-bit)**. It reuses the upstream XML operati
 core with a native loader written for Anno 2070.
 
 Place `version.dll` beside the game executable, with mod packages in `mods/`.
-Under Wine, set the DLL override `version=n,b`. No companion runtime DLL is needed.
+Under Wine, set the DLL override `version=n,b`.
 
 Packages load alphabetically; a leading `-` disables a package. Files under
 `data/` and `addondata/` replace game resources; XML rooted at `ModOps` patches
