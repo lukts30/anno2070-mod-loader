@@ -1,0 +1,14 @@
+[formatter.nix]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.python]
+command = "ruff"
+options = ["format"]
+includes = ["*.py"]
+
+[formatter.cpp]
+command = "clang-format"
+options = ["-i"]
+includes = ["*.cpp", "*.h"]
+excludes = ["build*/**", ".xwin/**", ".xwin-cache/**"]

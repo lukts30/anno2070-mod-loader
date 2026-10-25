@@ -1,5 +1,6 @@
 #include <mutex>
 #include <stdexcept>
+#include <string>
 #include <windows.h>
 void initialize_loader();
 namespace {
@@ -63,8 +64,8 @@ FORWARD(DWORD, VerInstallFileW,
         (DWORD a, LPWSTR b, LPWSTR c, LPWSTR d, LPWSTR e, LPWSTR f, LPWSTR g,
          PUINT h),
         (a, b, c, d, e, f, g, h))
-BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID) {
-  if (reason == DLL_PROCESS_ATTACH)
-    DisableThreadLibraryCalls(instance);
+BOOL WINAPI DllMain(HINSTANCE, DWORD, LPVOID) {
+  // The statically linked Microsoft CRT needs thread notifications.
+  // Initialize the loader on the first exported call, outside the loader lock.
   return TRUE;
 }

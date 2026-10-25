@@ -1,13 +1,22 @@
 #include <MinHook.h>
 #include <algorithm>
 #include <array>
+#include <cctype>
+#include <cstdint>
 #include <cstring>
 #include <fstream>
+#include <functional>
+#include <map>
+#include <memory>
 #include <mutex>
+#include <set>
 #include <spdlog/sinks/ostream_sink.h>
 #include <spdlog/spdlog.h>
 #include <sstream>
+#include <stdexcept>
+#include <string>
 #include <unordered_map>
+#include <vector>
 #include <windows.h>
 #include <xml_operations.h>
 

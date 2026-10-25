@@ -1,0 +1,7 @@
+/.direnv/
+/.xwin/
+/.xwin-cache/
+/build*/
+/dist/
+/result*
+__pycache__/
