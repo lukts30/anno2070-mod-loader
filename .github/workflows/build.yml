@@ -69,7 +69,9 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: clang-proxy-smoke
-          path: build/proxy-smoke.exe
+          path: |
+            build/proxy-smoke.exe
+            build/path-test.exe
           if-no-files-found: error
 
   release-smoke:
@@ -97,3 +99,6 @@ jobs:
       - name: Test packaged proxy
         shell: pwsh
         run: '& ./smoke/proxy-smoke.exe (Resolve-Path package/version.dll).Path'
+      - name: Test native path normalization
+        shell: pwsh
+        run: '& ./smoke/path-test.exe'

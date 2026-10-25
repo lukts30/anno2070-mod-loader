@@ -1,3 +1,4 @@
+#include "path.h"
 #include <MinHook.h>
 #include <algorithm>
 #include <array>
@@ -191,7 +192,8 @@ bool open_file(void *file, void *string, unsigned flags) {
       return success;
     auto data = capacity >= 8 ? *reinterpret_cast<wchar_t **>(raw)
                               : reinterpret_cast<wchar_t *>(raw);
-    std::string path = lower(fs::path(std::wstring(data, length)).u8string());
+    const auto path =
+        anno2070::normalize_game_path(fs::path(std::wstring(data, length)));
     if (plans.find(path) == plans.end())
       return success;
     std::lock_guard<std::mutex> guard(lock);
@@ -264,7 +266,7 @@ void scan(const fs::path &mods) {
                     ".include.xml")
           continue;
         auto relative = item.path().lexically_relative(root);
-        auto path = lower(relative.generic_u8string());
+        auto path = anno2070::normalize_game_path(relative);
         if (!seen.insert(path).second)
           throw std::runtime_error("duplicate normalized path " + path);
         auto bytes = read(item.path());
